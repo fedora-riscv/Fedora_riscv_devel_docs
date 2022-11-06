@@ -1,6 +1,6 @@
 <div align='center' ><font size='20'>Kojihub 部署</font></div>
 
-![img](https://www.kdocs.cn/api/v3/office/copy/d3ZDQytjM2RtQ1hZci9hVDRjWjRQeStrSzR1QitWeFJzK0VsaTJIS3FCb0ltMHhrd2V3cXBKdzdCOHgzS1pPcHNCM1ZubWptMG5mbHdxWklJV0N5ZHBnUTc1YVExZElVTExXVmlZazgyZVZ3NnhSUkt1UlhCejV1RlFwQWtnWFJNVHAxNGRvbUIzV251d3ltL1VJMi9rSVNSeEQrcVUwemIwNU5YeGMwZmJ2NEd6eHRIbXVodWRaVHViUnZmMzZkNDJteTR3NFd1dThqZEllaEhTeHFnK3IwMytyZmVML2NjcUQvdWxjbDBtZDhteE1VZ21OWXl0YnhJMkQyaWFmTldOSHBpd0pGWXZnPQ==/attach/object/20a88678e1afa70457da4f30b10cb531fab09af4)
+![img](./picture/3.1.png)
 
 # 0. 基础知识
 
@@ -43,7 +43,7 @@ Koji 主要支持 Kerberos 和 SSL Certificate 认证。对于基本的命令行
 
 在内部小规模部署的情况下，直接使用自签CA来签发证书进行身份认证较为简单。
 
-![img](https://www.kdocs.cn/api/v3/office/copy/d3ZDQytjM2RtQ1hZci9hVDRjWjRQeStrSzR1QitWeFJzK0VsaTJIS3FCb0ltMHhrd2V3cXBKdzdCOHgzS1pPcHNCM1ZubWptMG5mbHdxWklJV0N5ZHBnUTc1YVExZElVTExXVmlZazgyZVZ3NnhSUkt1UlhCejV1RlFwQWtnWFJNVHAxNGRvbUIzV251d3ltL1VJMi9rSVNSeEQrcVUwemIwNU5YeGMwZmJ2NEd6eHRIbXVodWRaVHViUnZmMzZkNDJteTR3NFd1dThqZEllaEhTeHFnK3IwMytyZmVML2NjcUQvdWxjbDBtZDhteE1VZ21OWXl0YnhJMkQyaWFmTldOSHBpd0pGWXZnPQ==/attach/object/e9508e24fc5527fc456d6c9e0cd9d23eafc79aa3)
+![img](./picture/3.2.png)
 
 **在/etc/pki/koji下处理全部自签名证书的问题**
 
@@ -181,7 +181,7 @@ cd /etc/pki/koji
 
 3. 签发模块证书
 
-   ![img](https://www.kdocs.cn/api/v3/office/copy/d3ZDQytjM2RtQ1hZci9hVDRjWjRQeStrSzR1QitWeFJzK0VsaTJIS3FCb0ltMHhrd2V3cXBKdzdCOHgzS1pPcHNCM1ZubWptMG5mbHdxWklJV0N5ZHBnUTc1YVExZElVTExXVmlZazgyZVZ3NnhSUkt1UlhCejV1RlFwQWtnWFJNVHAxNGRvbUIzV251d3ltL1VJMi9rSVNSeEQrcVUwemIwNU5YeGMwZmJ2NEd6eHRIbXVodWRaVHViUnZmMzZkNDJteTR3NFd1dThqZEllaEhTeHFnK3IwMytyZmVML2NjcUQvdWxjbDBtZDhteE1VZ21OWXl0YnhJMkQyaWFmTldOSHBpd0pGWXZnPQ==/attach/object/9f03065fed373ac797d23a20c36d6eb61223e7f3)
+   ![img](./picture/3.3.png)
 
    - 简单的模块证书签发流程脚本范例：cert-issue.sh
 
@@ -315,9 +315,9 @@ cd /etc/pki/koji
    
      \- - **首先请保证证书的读取权限对当前用户是可读的。** - 进入__about:preferences#privacy__ 页面的__“Certificates”__配置，并点击__“View Certificates…”__进入 “Certificate Manager”的 “__Your Certificates”标签__。点击 **“Import...”**,选择刚刚的p12文件即可。
      
-     ![img](https://www.kdocs.cn/api/v3/office/copy/d3ZDQytjM2RtQ1hZci9hVDRjWjRQeStrSzR1QitWeFJzK0VsaTJIS3FCb0ltMHhrd2V3cXBKdzdCOHgzS1pPcHNCM1ZubWptMG5mbHdxWklJV0N5ZHBnUTc1YVExZElVTExXVmlZazgyZVZ3NnhSUkt1UlhCejV1RlFwQWtnWFJNVHAxNGRvbUIzV251d3ltL1VJMi9rSVNSeEQrcVUwemIwNU5YeGMwZmJ2NEd6eHRIbXVodWRaVHViUnZmMzZkNDJteTR3NFd1dThqZEllaEhTeHFnK3IwMytyZmVML2NjcUQvdWxjbDBtZDhteE1VZ21OWXl0YnhJMkQyaWFmTldOSHBpd0pGWXZnPQ==/attach/object/3bfe5f3bf5837ab59e57575b10618d13518d3c00)
+     ![img](./picture/3.4.png)
      
-     ![img](https://www.kdocs.cn/api/v3/office/copy/d3ZDQytjM2RtQ1hZci9hVDRjWjRQeStrSzR1QitWeFJzK0VsaTJIS3FCb0ltMHhrd2V3cXBKdzdCOHgzS1pPcHNCM1ZubWptMG5mbHdxWklJV0N5ZHBnUTc1YVExZElVTExXVmlZazgyZVZ3NnhSUkt1UlhCejV1RlFwQWtnWFJNVHAxNGRvbUIzV251d3ltL1VJMi9rSVNSeEQrcVUwemIwNU5YeGMwZmJ2NEd6eHRIbXVodWRaVHViUnZmMzZkNDJteTR3NFd1dThqZEllaEhTeHFnK3IwMytyZmVML2NjcUQvdWxjbDBtZDhteE1VZ21OWXl0YnhJMkQyaWFmTldOSHBpd0pGWXZnPQ==/attach/object/d5c4ef6a9619f68373a48ef58c23eccadc228897)
+     ![img](./picture/3.5.png)
      
      以下是可能遇到的问题和解决方案：
      
@@ -337,7 +337,7 @@ cd /etc/pki/koji
        security.tls.enable_post_handshake_auth -------> true
        ```
      
-       ![img](https://www.kdocs.cn/api/v3/office/copy/d3ZDQytjM2RtQ1hZci9hVDRjWjRQeStrSzR1QitWeFJzK0VsaTJIS3FCb0ltMHhrd2V3cXBKdzdCOHgzS1pPcHNCM1ZubWptMG5mbHdxWklJV0N5ZHBnUTc1YVExZElVTExXVmlZazgyZVZ3NnhSUkt1UlhCejV1RlFwQWtnWFJNVHAxNGRvbUIzV251d3ltL1VJMi9rSVNSeEQrcVUwemIwNU5YeGMwZmJ2NEd6eHRIbXVodWRaVHViUnZmMzZkNDJteTR3NFd1dThqZEllaEhTeHFnK3IwMytyZmVML2NjcUQvdWxjbDBtZDhteE1VZ21OWXl0YnhJMkQyaWFmTldOSHBpd0pGWXZnPQ==/attach/object/746289800d9f570d3badf4fa053772ebf85fae51)
+       ![img](./picture/3.6.png)
      
      - AuthError 问题
      

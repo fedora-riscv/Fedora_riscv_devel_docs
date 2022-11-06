@@ -1,6 +1,6 @@
 <div align='center' ><font size='20'>Koji 概述</font></div>
 
-![img](https://www.kdocs.cn/api/v3/office/copy/bERKSW9mOGF4MXpQeS8yR2ZpSk1rN1JXUnFsUzlDQStkUksvcVpZWk5JL25LanhxM2RyaXFRUHVkQWRiZG8yVVlVb09MT2tISXh0bEhBN25DYmNodDYxS3lpaWltODAvRzRNU1BQOWVaclBRYnVIR2tKZTdTYkpqRXFGUUVmSDBxL280VDFCTE92Uk84ZkNDbmsxeXNCZ2gvaXhlVHZlM0JKUUhWMnRCYXFjZHNIa1ZVMERQNzgzbDROLzdJSGI3Z29jUmplT2t5c3FVUlNFTnIzRHZEYWprUlBkUmVtVzR3SFpvMCtQQlRYSjByOVFnbmV5clFlNXk1NjZEU2s5L29MYzVseUhwTmNnPQ==/attach/object/e3cad03d6e5f248fdc0b7e96608d734ddb694fe4)
+![img](./picture/1.1.png)
 
 [TOC]
 
@@ -90,7 +90,7 @@ koji使用tag来引用package或build的集合。也就是说可以给多个pack
 
 # 2. 结构简介
 
-![img](https://www.kdocs.cn/api/v3/office/copy/bERKSW9mOGF4MXpQeS8yR2ZpSk1rN1JXUnFsUzlDQStkUksvcVpZWk5JL25LanhxM2RyaXFRUHVkQWRiZG8yVVlVb09MT2tISXh0bEhBN25DYmNodDYxS3lpaWltODAvRzRNU1BQOWVaclBRYnVIR2tKZTdTYkpqRXFGUUVmSDBxL280VDFCTE92Uk84ZkNDbmsxeXNCZ2gvaXhlVHZlM0JKUUhWMnRCYXFjZHNIa1ZVMERQNzgzbDROLzdJSGI3Z29jUmplT2t5c3FVUlNFTnIzRHZEYWprUlBkUmVtVzR3SFpvMCtQQlRYSjByOVFnbmV5clFlNXk1NjZEU2s5L29MYzVseUhwTmNnPQ==/attach/object/20a88678e1afa70457da4f30b10cb531fab09af4)
+![img](./picture/1.2.png)
 
 示例架构图
 

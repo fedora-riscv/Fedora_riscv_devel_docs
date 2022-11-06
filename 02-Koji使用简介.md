@@ -1,6 +1,6 @@
 <div align='center' ><font size='20'>koji命令行和Web界面使用</font></div>
 
-![img](https://www.kdocs.cn/api/v3/office/copy/am9CU1hOZS8wc3ZjQWhaSHJ5WHlWQXNQb1dhVXMxbERHQS90MHNaT0UyTUdwd1A0UjNTZ1k0N29zbkk0djBrMFZ3bkNxcGVMdG9jM3lYNkcyYTczMWZFc052Mk4wZ2U1TDRmWDJwSks3K0JKMTExcE5udk1JdjhlRGdGUXEyM2JOR0pLR01qMGpzb1kyT1ViaEVrdW16dmVKV1hvcG1mbGwvR1dvSkdtVXZId3E2VjY5NkhLZWVIYk83Zm1UQnB6THZpTU41bjkyZTR4OEN6N3UvMVFVSHVoNVJhWGVUV2ZUVmJiMzFtU1hONlBoRmg3QkRoYndObndrQzVkKzNIVVdKdDcvQVE2MEJZPQ==/attach/object/4200df0e6cb0b8154714b97587b5f78980bef52f)
+![img](./picture/2.1.png)
 
 # 1. 使用 Koji 命令行工具 cli
 
