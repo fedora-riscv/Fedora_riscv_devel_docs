@@ -1,5 +1,3 @@
-
-
 <div align='center' ><font size='20'>Mock辅助编译及仓库测试</font></div>
 
 ![img](./picture/5.1.png)
@@ -12,7 +10,7 @@ Mock也提供了一个多包编译命令 (--chain)，它可以编译一系列存
 
 如果系统中安装了 mock-scm 包，Mock可以通过__源码配置管理工具（__Source Configuration Management__）__构建SRPMs。请参考文档中的 --scm-enable。
 
-# **简介**
+# 简介
 
 - Mock 是rpmbuild的封装，目的是简化繁琐的编译准备步骤。
 - Mock 在一个包含最小软件包集合的隔离环境中运行rpmbuild。
@@ -34,17 +32,13 @@ Mock也提供了一个多包编译命令 (--chain)，它可以编译一系列存
 sudo dnf install mock
 ```
 
-
-
-对于最新的持续集成构建版本，请参考[开发者文档](https://github.com/rpm-software-management/mock" \l "nightly)。
+对于最新的持续集成构建版本，请参考[开发者文档](https://github.com/rpm-software-management/mock)。
 
 - 注意：跨平台编译需要安装qemu-user-static：
 
 ```shell
 sudo dnf install qemu-user-static
 ```
-
-
 
 # 配置
 
@@ -54,19 +48,17 @@ sudo dnf install qemu-user-static
 sudo usermod -a -G mock [User name]
 ```
 
+__警告：__ Mock运行的部分代码需要root权限。有几个已知的方法获取root访问权限，只要用户在mock组中（且只有他可以运行mock). 这可能使用户滥用mock配置选项成为可能。请不要将任何非可信用户加入mock组！
 
-
-__警告：__Mock运行的部分代码需要root权限。有几个已知的方法获取root访问权限，只要用户在mock组中（且只有他可以运行mock). 这可能使用户滥用mock配置选项成为可能。请不要将任何非可信用户加入mock组！
-
-__注意：__以上操作将在用户重新登录或运行“newgrp -”命令后才起效。
+__注意：__ 以上操作将在用户重新登录或运行“newgrp -”命令后才起效。
 
 Mock会(通过yum_cache插件)缓存下载的rpm包，这可极大加速后续编译。此外你也可通过在默认配置中添加本地仓库来实现加速。
 
-默认配置下，__所有编译结果将保存于/var/lib/mock中__，所以请确保此目录有足够空间用于编译。你也可通过[“basedir”配置选项](https://lwebapp.com/zh/docx-to-markdown#_目录设置)将其指向其他目录。
+默认配置下，__所有编译结果将保存于/var/lib/mock中__，所以请确保此目录有足够空间用于编译。你也可通过“basedir”配置选项将其指向其他目录。
 
 # 配置文件解析
 
-Mock配置文件可以从逻辑上分为__通用配置__（用于每次mock执行） 和__chroot配置__（只用于指定相关的chroot，见下文）。
+Mock配置文件可以从逻辑上分为 __通用配置__（用于每次mock执行） 和 __chroot配置__（只用于指定相关的chroot，见下文）。
 
 通用配置和chroot配置两者都可写在在系统配置 (/etc/mock目录) 或用户配置(文件位于 $HOME/.config 目录)中。
 
@@ -79,10 +71,8 @@ Mock 项目提供了“mock-core-configs”包，其中包含了基于RPM的不�
 例如初始化一个 Fedora Rawhide x86_64 chroot (使用/etc/mock/fedora-rawhide-x86_64.cfg 文件), 并切换到 chroot中（的shell环境），可做如下操作：
 
 ```shell
-$ mock **-r fedora-rawhide-x86_64** --shell
+$ mock -r fedora-rawhide-x86_64 --shell
 ```
-
-
 
 注意，此处我们没有在-r参数中指明.cfg后缀。**此时，将先搜索用户$HOME/.config目录中的相关.cfg文件，若未找到，则将搜索系统配置/etc/mock目录中的文件(并使用)。**
 
@@ -93,11 +83,9 @@ $ mock -r ./subdir/existing-config-file.cfg --shell
 $ mock -r /etc/mock/fedora-35-x86_64.cfg
 ```
 
-
-
 ## 调整通用配置
 
-通常，__$HOME/.config/mock.cfg__文件应该被用于针对单用户的通用配置修改。如需修改系统的Mock行为(对于系统所有用户)，则使用 /etc/mock/site-defaults.cfg。
+通常，__$HOME/.config/mock.cfg__ 文件应该被用于针对单用户的通用配置修改。如需修改系统的Mock行为(对于系统所有用户)，则使用 /etc/mock/site-defaults.cfg。
 
 通常site-defaults.cfg文件默认是空的，而只包含基本文档和 一个指向完整配置文档的有效链接。那个文档通常是__/usr/share/doc/mock/site-defaults.cfg __(基于你的宿主机系统的不同，位置可能不同)。
 
@@ -115,15 +103,11 @@ include("/etc/mock/fedora-35-x86_64.cfg")
 config_opts['chroot_additional_packages'] = 'make'
 ```
 
-
-
 你也可以拷贝并编辑已有的配置文件到新的配置文件：
 
 ```shell
 $ cp /etc/mock/fedora-rawhide-x86_64.cfg ~/.config/mock/foo.cfg
 ```
-
-
 
 若Koji中已存在一个所需的配置，你可以用Koji命令行工具生成这个配置文件：
 
@@ -131,23 +115,17 @@ $ cp /etc/mock/fedora-rawhide-x86_64.cfg ~/.config/mock/foo.cfg
 $ koji mock-config --tag f21-build --arch=aarch64 f21 > ~/.config/mock/foo.cfg
 ```
 
-
-
 同样的功能也存在于Copr命令行工具中：
 
 ```shell
 $ copr mock-config @copr/copr-dev fedora-21-x86_64 > ~/.config/mock/foo.cfg
 ```
 
-
-
 当完成配置文件的安装，你就可以：
 
 ```shell
 mock -r foo [...].
 ```
-
-
 
 ## 配置导入顺序
 
@@ -166,44 +144,56 @@ Mock中的配置文件的导入和覆盖顺序如下（[相关代码](https://gi
 
 **后导入的配置文件中的值会覆盖先导入配置。**
 
-# **qemu user mode Mock build 配置**
+# qemu user mode Mock build 配置
+
+## Released version
 
 比如，为Fedora 37 编译riscv64构架的rpm包，配置文件如下：
 
 **/etc/mock/fedora-37-riscv64.cfg**
-
-```shell
-config_opts['releasever'] = '37'
-config_opts['target_arch'] = 'riscv64'
-config_opts['legal_host_arches'] = ('riscv64',)
-
-include('templates/fedora-branched.tpl')
-```
-
-
 
 如果是 RawHide版本则为__(文档编写时的rawhide版本为38)__：
 
 **/etc/mock/fedora-38-riscv64.cfg**
 
 ```shell
+config_opts['releasever'] = '37'
 config_opts['target_arch'] = 'riscv64'
 config_opts['legal_host_arches'] = ('riscv64',)
+config_opts['qemu_user_static_mapping'] = {'riscv64': 'riscv64',}
+
+include('templates/fedora-branched.tpl')
+```
+
+## Rawhide
+
+若是RawHide版本则为(****文档编写时的rawhide版本为38****)：
+
+/etc/mock/fedora-****rawhide****-****riscv64****.cfg
+
+```shell
+config_opts['target_arch'] = 'riscv64'
+config_opts['legal_host_arches'] = ('riscv64',)
+config_opts['qemu_user_static_mapping'] = {'riscv64': 'riscv64',}
 
 include('templates/fedora-rawhide.tpl')
 ```
 
+然后建立当前rawhide版本的软链：
 
+```shell
+sudo ln -sf fedora-rawhide-riscv64.cfg  /etc/mock/fedora-38-riscv64.cfg
+```
 
-对于还未受到官方主线支持的构架(如例中的riscv64)，templates中文件包含的仓库配置可能无法满足编译。此时根据[配置导入顺序](https://lwebapp.com/zh/docx-to-markdown#_配置导入顺序)，需要对“用户特有配置：”中的文件进行修改，用正确的仓库信息覆盖原先导入的信息。例如：
+注意： rawhide 与实际版本号的对应都是通过软链实现的，例如：**/etc/mock/fedora-38-riscv64.cfg -> fedora-rawhide-riscv64.cfg**
+
+对于还未受到官方主线支持的构架(如例中的riscv64)，templates中文件包含的仓库配置可能无法满足编译。此时根据配置导入顺序，需要对“用户特有配置：”中的文件进行修改，用正确的仓库信息覆盖原先导入的信息。例如：
 
 **~/.mock/user.cfg 或 ~/.config/mock.cfg 文件内容：**
 
 ```shell
-include('/etc/mock/templates/fedora-37-riscv64-repo.tpl')
+include('/etc/mock/templates/fedora-riscv64-repo.tpl')
 ```
-
-
 
 **/etc/mock/templates/fedora-37-riscv64-repo.tpl文件内容：**
 
@@ -231,9 +221,9 @@ user_agent={{ user_agent }}
 
 # repos
 
-[fedora-37-dist-riscv]
-name=Fedora 37 RISC-V dist on OpenKoji
-baseurl=https://openkoji.iscas.ac.cn/repos/fc37dist/$basearch/
+[fedora-{{ releasever }}-dist-riscv]
+name=Fedora {{ releasever }} RISC-V dist on OpenKoji
+baseurl=https://openkoji.iscas.ac.cn/repos/fc{{ releasever }}dist/$basearch/
 cost=1000
 enabled=1
 skip_if_unavailable=False
@@ -249,80 +239,124 @@ skip_if_unavailable=True
 name=Fedora 36 RISC-V dev on OpenKoji - Source
 baseurl=https://openkoji.iscas.ac.cn/repos/fc36dev/src/
 cost=2000
-enabled=1
+enabled=0
 skip_if_unavailable=True
 """
 ```
 
+# 编译参考流程
 
+## 设置编译环境变量
 
-# **编译参考流程**
-
-创建工作环境
+rpm_build_tools.conf
 
 ```shell
-MOCK_CONFIG=fedora-36-riscv64
-WORK_DIR=/mnt/nfs/${MOCK_CONFIG}
-LOCAL_REPO=/mnt/nfs/${MOCK_CONFIG}-localrepo/
+MOCK_CONFIG=fedora-rawhide-riscv64
+WORK_DIR=/mnt/development/RISC-V/rpm_packaging/${MOCK_CONFIG}
+LOCAL_REPO=/mnt/development/RISC-V/rpm_packaging/${MOCK_CONFIG}-localrepo/
+GIT_REPO_BASE=git@gitee.com:src-oepkgs-fedora-rv
+GIT_REPO_BASE_SSH=git+ssh://git@gitee.com/src-oepkgs-fedora-rv
 DEVEL_REMOTE=origin
-DEVEL_BRANCH=rvf36
+DEVEL_BRANCH_ORG=rawhide
+DEVEL_BRANCH=f38_riscv64
 CMT_MESSAGE='Add source code tarball to repo.'
-BUILD_TAG=f36dev
+#for koji build
+BUILD_TARGET=f38dev
+BUILD_TAG=f38dev
 ```
 
+## 编译RPM
 
+### 通过srpm仓库编译
 
-假设我们的代码下载于此，也就是工作仓库：__/mnt/nfs/${MOCK_CONFIG}-repo __
+1. 修改配置文件~/.mock/user.cfg
+   
+   添加git仓库基地址，详见针对SCM的配置调整：
+   
+   ```shell
+   include('/etc/mock/templates/fedora-38-riscv64-repo.tpl')
+   
+   config_opts['scm_opts']['git_get'] = 'git clone SCM_BRN git@gitee.com:src-oepkgs-fedora-rv/SCM_PKG.git SCM_PKG'
+   ```
+
+2. 编译命令范例（单包编译）
+   
+   ```shell
+   PKG_NAME=${1-zlib}
+   env G_SLICE=always-malloc \
+   mock -r ${MOCK_CONFIG} \
+   --scm-enable \
+   --scm-option package=${PKG_NAME} \
+   --scm-option branch=${DEVEL_BRANCH} \
+   --resultdir ${WORK_DIR}/${PKG_NAME}_WS
+   ```
+
+### chain build编译模式
+
+假设我们的代码下载于工作目录：${WORK_DIR}
 
 ```shell
-PKG_NAME=zlib
-cd $WORK_DIR
-mkdir -p $PKG_NAME
-git clone git@gitee.com:src-oepkgs-fedora-rv/$PKG_NAME.git $PKG_NAME/$PKG_NAME
-pushd $PKG_NAME/$PKG_NAME
-git checkout f36
-######以下是为了在编译时可以不需要下载源码，######
-######保证编译顺利进行，不会因为源码下载失败而出错 ######
-git checkout -b $DEVEL_BRANCH;
-spectool -g $PKG_NAME.spec
-#如果下载失败请使用以下命令
-#fedpkg source
-#检查是否下载了所有的源码
+mkdir -p $LOCAL_REPO $WORK_DIR
+pushd $WORK_DIR
+
+
+PKG_NAME=${1-zlib}
+# _WS : WorkSpace
+mkdir -p ${PKG_NAME}_WS
+
+
+######为了保证编译顺利进行，不会因源码下载失败而出错######
+######以下操作仅为了提前下载好源码######
+git clone ${GIT_REPO_BASE}/${PKG_NAME}.git ${PKG_NAME}_WS/${PKG_NAME}
+pushd ${PKG_NAME}_WS/${PKG_NAME}
+git checkout ${DEVEL_REMOTE}/${DEVEL_BRANCH_ORG}
+git checkout -b ${DEVEL_BRANCH}
+fedpkg source
+#若下载失败可尝试以下命令
+#spectool -g ${PKG_NAME}.spec
+#获取所有源码压缩文件的列表
 SRC_FILE=`cat sources | awk '{printf $2}' | sed -e 's/(//g' -e 's/)/ /g'`
-git add -f $SRC_FILE
-git rm sources
-git commit -am "$CMT_MESSAGE"; git push $DEVEL_REMOTE $DEVEL_BRANCH
+#强行加入git的commit中
+#并删除名为source的文件，确保编译系统不在编译阶段下载源码压缩包
+git add -f $SRC_FILE && git rm sources
+#本地提交带源码压缩包的commit
+git commit -am "$CMT_MESSAGE"
+#推到远程仓库，确保之后可使用这个带源码的提交点
+git push $DEVEL_REMOTE $DEVEL_BRANCH
+popd
 ###### end ######
-koji add-pkg --owner=kojiadmin ${BUILD_TAG} $PKG_NAME;
-cd ..
+
+
+#先构建SRPM,然后用‘--chain’构建RPMs，解决编译依赖问题。
 env G_SLICE=always-malloc \
 mock -r ${MOCK_CONFIG} \
+--scm-enable \
+--scm-option package=${PKG_NAME} \
+--scm-option branch=${DEVEL_BRANCH} \
 --buildsrpm \
---spec $(basename $PWD)/$(basename $PWD).spec \
---source $(basename $PWD) && cp -vf /var/lib/mock/${MOCK_CONFIG}/result/$(basename $PWD)*src.rpm .
-
+--resultdir ${PKG_NAME}_WS && \
 env G_SLICE=always-malloc \
 mock -r ${MOCK_CONFIG} \
 --localrepo ${LOCAL_REPO} \
 --recurse --chain \
-$(basename $PWD)*src.rpm
+${PKG_NAME}_WS/${PKG_NAME}*src.rpm
+
+popd
 ```
 
-
-
 - __--cleanup-after__：在编译完成后清理编译现场
-- __--nocheck __：跳过最后的%check阶段，对于某些test不过的riscv包可以临时出包解决依赖问题。
-- __-D 'dist .f36'：__临时定义dist字段，对于早期rpm配置宏还不完整的情况下有帮助。
+- __--nocheck__：跳过最后的%check阶段，对于某些test不过的riscv包可以临时出包解决依赖问题。
+- __-D 'dist .f36'：__ 临时定义dist字段，对于早期rpm配置宏还不完整的情况下有帮助。
+- __--chain：__ 仅接受从SRMP编译。“CRITICAL: You must specify an SRPM file with --chain”
 
 如果编译失败，污染了编译环境，或者仓库缓存中有旧包（同版本或者低版本）影响了编译，可以通过以下命令清理编译环境。
 
 ```shell
-env G_SLICE=always-malloc mock -r fedora-36-riscv64 --cleanup-after --scrub=all
+env G_SLICE=always-malloc \
+mock -r ${MOCK_CONFIG} --cleanup-after --scrub=all
 ```
 
-
-
-# **编译完成后的结果处理**
+## Mock编译完成后的结果处理
 
 在编译完成后，在可以将结果导入仓库，如将rpm从 ${__LOCAL_REPO__}拷贝到external repo 中, 并更新仓库：
 
@@ -330,41 +364,27 @@ env G_SLICE=always-malloc mock -r fedora-36-riscv64 --cleanup-after --scrub=all
 createrepo -v --update ${external_repo_path}
 ```
 
-
-
 然后通过
 
 ```shell
-koji -q --skip-main regen-repo --nowait  ${BUILD_TAG}
+koji -q --skip-main regen-repo --nowait ${BUILD_TAG}
 ```
-
-
 
 更新相应tag的仓库
 
-# **有koji任务提交权限的账户，也可直接提交任务到koji：**
+## 提交任务到koji（有koji提交权限的账户）
 
 ```shell
-koji build --nowait $BUILD_TAG git+ssh://git@gitee.com/src-oepkgs-fedora-rv/$PKG_NAME.git#$(git rev-parse $DEVEL_REMOTE/$DEVEL_BRANCH)
+koji add-pkg --owner=kojiadmin ${BUILD_TARGET} $PKG_NAME;
+koji build --nowait ${BUILD_TARGET} \
+${GIT_REPO_BASE_SSH}/${PKG_NAME}.git#$(git rev-parse ${DEVEL_REMOTE}/${DEVEL_BRANCH})
 ```
 
-
-
-客户端 (koji-builder)
-
-mock
-
-setarch (for some archs you'll require a patched version)
-
-rpm-build
-
-createrepo
-
-# 附录：mock配置详解【site-defaults.cfg翻译重排】
+# 附录：mock配置详解【site-defaults.cfg 翻译重排】
 
 ## 配置文件分类
 
-__全局配置文件：__site-defaults.cfg，应用于宿主机，包含所有配置默认值，其中指定的__配置选项将会被用户各自的mock配置文件覆盖__。
+__全局配置文件：__ site-defaults.cfg，应用于宿主机，包含所有配置默认值，其中指定的 __配置选项将会被用户各自的mock配置文件覆盖__。
 
 - /etc/mock/site-defaults.cfg：软件包自带配置文件，默认是没有设置任何配置选项的，仅当你想覆盖某些默认配置时才需要在此设置。
 - /usr/share/doc/mock/site-defaults.cfg：属于介绍性文档。
@@ -385,7 +405,7 @@ __用户配置文件__：~/.config/mock.cfg
 
 可以使用jinja模板，比如：**config_opts['foobar'] = '{{ foo }} bar'**
 
-(使用以上的定义)其结果为__'bar bar'__ 。
+(使用以上的定义)其结果为 __'bar bar'__ 。
 
 较复杂的例子：
 
@@ -402,8 +422,6 @@ config_opts['basedir'] = '/var/lib/mock/'
 config_opts['cache_topdir'] = '/var/cache/mock'
 ```
 
-
-
 注: basedir 和 cache_topdir 指向的路径，其属主必须为'mock'组，且权限必须为“g+rws”
 
 ### 超时设置
@@ -412,11 +430,9 @@ config_opts['cache_topdir'] = '/var/cache/mock'
 config_opts['rpmbuild_timeout'] = 0
 ```
 
-
-
 ### 网络设置
 
-使用__“--enable-network”__会设__use_host_resolv__为__True，__可用以下方式修改：
+使用 __“--enable-network”__ 会设 __use_host_resolv__ 为 __True，__ 可用以下方式修改：
 
 ```shell
 config_opts['use_host_resolv'] = False
@@ -436,15 +452,11 @@ config_opts['root_log_fmt_name']  = "detailed"
 config_opts['state_log_fmt_name'] = "state"
 ```
 
-
-
 默认情况下, mock（只）会将build log输出到（tty的）stderr。可通过设置以下为True强制其输出(应用场景，如在CI编译环境中没有tty)，或设为False强制关闭输出。注释掉这个选项或者将其设为None，则为默认设置。
 
 ```shell
 config_opts['print_main_output'] = None
 ```
-
-
 
 这个选项用于设置build.log文件中stderr的输出前缀。默认为空字符串。
 
@@ -452,25 +464,19 @@ config_opts['print_main_output'] = None
 config_opts['stderr_line_prefix'] = ""
 ```
 
-
-
 ### 设备结点相关设置
 
-mock通常会为chroot设置一个最小的/dev。若想用一个预先配置好的/dev，需禁用此选项并使用[bind-mount插件](#_bind mount 插件)来挂载定制的/dev。
+mock通常会为chroot设置一个最小的/dev。若想用一个预先配置好的/dev，需禁用此选项并使用bind-mount插件来挂载定制的/dev。
 
 ```shell
 config_opts['internal_dev_setup'] = True
 ```
-
-
 
 loop设备的默认最大数量12
 
 ```shell
 config_opts['dev_loop_count'] = 12
 ```
-
-
 
 ### 目录清理设置
 
@@ -481,8 +487,6 @@ config_opts['cleanup_on_success'] = True
 config_opts['cleanup_on_failure'] = True
 ```
 
-
-
 为了防止来自上次编译过程中的垃圾影响接下来的编译，即使使用了“--no-clean”，编译用户的homedir也会被部分清理。
 
 Mock可配置为不清理特定的文件/目录，其默认配置为SOURCES目录以支持nosrc rpm编译。路径是相对于用户的homedir build。
@@ -491,16 +495,12 @@ Mock可配置为不清理特定的文件/目录，其默认配置为SOURCES目�
 config_opts['exclude_from_homedir_cleanup'] = ['build/SOURCES']
 ```
 
-
-
 若需要mock在清理前备份结果文件夹（result dir）的内容，可用以下配置
 
 ```shell
 config_opts['backup_on_clean'] = False
 config_opts['backup_base_dir'] = "{{basedir}}/backup"
 ```
-
-
 
 ### 隔离模式（容器相关）设置
 
@@ -510,9 +510,7 @@ config_opts['backup_base_dir'] = "{{basedir}}/backup"
 config_opts['isolation'] = 'auto'
 ```
 
-
-
-#### **'nspawn'**
+#### 'nspawn'
 
 若使用isolation='nspawn'，则对于rpmbuild，网络是默认关闭的，目的是为了保证编译的可重现性。
 
@@ -520,17 +518,13 @@ config_opts['isolation'] = 'auto'
 config_opts['rpmbuild_networking'] = False
 ```
 
-
-
 针对nspawn的额外参数为
 
 ```shell
 config_opts['nspawn_args'] = ['--capability=cap_ipc_lock']
 ```
 
-
-
-#### __hostname __
+#### hostname
 
 当RPM 在容器中编译时，编译时的hostname 将被设置成容器名。以下可设置编译时的hostname为容器宿主机名，仅适用于F25以上的chroots。
 
@@ -538,25 +532,25 @@ config_opts['nspawn_args'] = ['--capability=cap_ipc_lock']
 config_opts['use_container_host_hostname'] = True
 ```
 
-
-
 这个设置无条件地调用sethostname()实现hostname的设置，但尽管如此变量use_container_host_hostname或%_buildhost宏可覆盖此设置。
 
 ```shell
 config_opts['hostname'] = 'my.own.hostname'
 ```
 
+注意：[测试中发现]指定hostname必须和以下配置一起使用：
 
+```shell
+config_opts['use_nspawn'] = False
+```
 
-#### **docker_unshare_warning**
+#### docker_unshare_warning
 
 Mock默认是不共享用户空间的，这与其他在非特权容器中的应用忽略此特性有所不同。mock将显示警告信息，将mock与其他应用运行与同一个容器并不妥当且存在安全风险。如果你已知其安全风险，或mock是你在其容器中的唯一应用，则可通过以下选项关闭警告。
 
 ```shell
 config_opts['docker_unshare_warning'] = True
 ```
-
-
 
 ### 包管理器相关设置
 
@@ -568,16 +562,12 @@ config_opts['docker_unshare_warning'] = True
 config_opts['package_manager'] = 'dnf'
 ```
 
-
-
 执行包管理器操作的尝试次数和两次操作间的间隔（秒）。此设置用于，例如，编译使用了不可靠仓库镜像站点（下载元数据失败，下载软件包失败...）
 
 ```shell
 config_opts['package_manager_max_attempts'] = 1
 config_opts['package_manager_attempt_delay'] = 10
 ```
-
-
 
 如需要使用与主系统本版不同的包管理器，可设置Yum、DNF、rpm和rpmbuild可执行文件的路径：
 
@@ -595,8 +585,6 @@ config_opts['rpmbuild_command'] = '/usr/bin/rpmbuild'
 config_opts['update_before_build'] = True
 ```
 
-
-
 #### resultdir仓库生成
 
 若要mock对您resultdir中的rpm包自动运行createrepo，可修改以下配置
@@ -605,8 +593,6 @@ config_opts['update_before_build'] = True
 config_opts['createrepo_on_rpms'] = False
 config_opts['createrepo_command'] = '/usr/bin/createrepo_c -d -q -x *.src.rpm'
 ```
-
-
 
 #### bootstrap
 
@@ -621,8 +607,6 @@ chroot, 其中仅包含rpm/yum/dnf 软件栈，然后我们以这个"bootstrap" 
 ```shell
 config_opts['use_bootstrap'] = True
 ```
-
-
 
 当 'use_bootstrap' 被使能，这些命令可被用于安装我们所期望的包管理器到"bootstrap" chroot。
 
@@ -640,8 +624,6 @@ config_opts['use_bootstrap_image'] = False
 config_opts['bootstrap_image'] = 'fedora:latest'
 ```
 
-
-
 任何以'bootstrap_*' 格式定义的配置将会被复制到bootstrap配置中，例如
 
 ```shell
@@ -654,16 +636,12 @@ config_opts['bootstrap_system_yum_command'] ='/usr/bin/yum-deprecated'
 config_opts['system_yum_command'] = '/usr/bin/yum-deprecated'
 ```
 
-
-
 由于通常不会在bootstrap chroot中添加额外的包和模块，以下配置会在bootstrap中被默认值覆盖。
 
 ```shell
 config_opts['bootstrap_chroot_additional_packages'] = []
 config_opts['bootstrap_module_setup_commands'] = []
 ```
-
-
 
 ### 编译依赖设置
 
@@ -674,15 +652,11 @@ config_opts['dynamic_buildrequires'] = True
 config_opts['dynamic_buildrequires_max_loops'] = 10
 ```
 
-
-
 允许使用外部编译依赖（external buildrequires），如当依赖需用PyPI, Rubygems安装
 
 ```shell
 config_opts['external_buildrequires'] = False
 ```
-
-
 
 ### tar相关设置
 
@@ -693,8 +667,6 @@ config_opts['tar_binary'] = "/bin/tar"
 config_opts['tar'] = "gnutar"
 ```
 
-
-
 ### nosync设置
 
 如果需要加速包的安装和编译过程，mock可以使用nosync库来跳过来自mock程序内部的fsync以及相关的调用。这需要安装nosync库，且对于multilib目标，所有构架都需要存在nosync 库支持。如果不满足条件，这将无法使能。
@@ -703,15 +675,11 @@ config_opts['tar'] = "gnutar"
 config_opts['nosync'] = False
 ```
 
-
-
 若即不想安装所有构架的nosync 支持库，但又希望mock使用它，虽可强制使能此项，但当执行32bit程序时将会有许多来自ld.so的（一般无害的）错误信息。
 
 ```shell
 config_opts['nosync_force'] = False
 ```
-
-
 
 ### 结果保存目录设置
 
@@ -720,8 +688,6 @@ Resultdir 选项可设置结果文件（RPMs和编译日志）的写入目录，
 ```shell
 config_opts["resultdir"] = "{{basedir}}/{{root}}/result"
 ```
-
-
 
 ## 插件相关配置
 
@@ -773,8 +739,6 @@ config_opts['plugin_conf']['chroot_scan_opts'] = {'regexes': [ "^[^k]?core(\.\d+
 only_failed：若为True，则文件仅在编译失败时拷贝。
 ```
 
-
-
 ### bind mount 插件
 
 bind mount 插件默认是使能的，但默认并未配置挂载目录
@@ -784,8 +748,6 @@ config_opts['plugin_conf']['bind_mount_enable'] = True
 config_opts['plugin_conf']['bind_mount_opts']['dirs'].append(('/host/path', '/bind/mount/path/in/chroot/' ))
 ```
 
-
-
 ### lvm_root 插件
 
 lvm_root插件默认是禁用状态，其状态传递到其余的子包mock-lvm。若需使用，建议禁用root_cache 插件，否则将缓存两次。
@@ -794,8 +756,6 @@ lvm_root插件默认是禁用状态，其状态传递到其余的子包mock-lvm�
 config_opts['plugin_conf']['lvm_root_enable'] = False
 config_opts['plugin_conf']['lvm_root_opts'] = {}
 ```
-
-
 
 接下来，必须为其提供一个卷组及充足的空间。它不会使用任何已存在的逻辑卷，故可使用你为其他目的已启用的同一卷组。此处需要VG名 (并非设备节点路径).
 
@@ -810,15 +770,11 @@ config_opts['plugin_conf']['lvm_root_opts']['volume_group'] = 'my_vg'
 config_opts['plugin_conf']['lvm_root_opts']['size'] = '2G'
 ```
 
-
-
 可指定可选的池元数据大小，格式和“size”一致，默认值由lvcreate的size来决定。
 
 ```shell
 config_opts['plugin_conf']['lvm_root_opts']['poolmetadatasize'] = None
 ```
-
-
 
 当精简池利用率超过90%，mock将停止工作。因为一旦利用率达到100%将会触发各种奇怪的问题：
 
@@ -874,7 +830,7 @@ config_opts['plugin_conf']['overlayfs_opts']['touch_rpmdb'] = False
 
 ### pm_request 插件
 
-pm_request插件可在buildroot中安装需要的软件包。此插件默认是禁用的，因为这会影响编译的可重现性。可通过设以下选项为True来启用它。但不建议全局启用此项。最佳实践是在单次编译时使用‘__--enable-plugin pm_request’__来启动该插件。
+pm_request插件可在buildroot中安装需要的软件包。此插件默认是禁用的，因为这会影响编译的可重现性。可通过设以下选项为True来启用它。但不建议全局启用此项。最佳实践是在单次编译时使用‘__--enable-plugin pm_request’__ 来启动该插件。
 
 ```shell
 config_opts['plugin_conf']['pm_request_enable'] = False
@@ -981,8 +937,8 @@ config_opts['scm_opts']['git_timestamps'] = True
 config_opts['scm_opts']['exclude_vcs'] = True
 
 以下选项也会被识别生效，但通常定义在命令行中：
-
 --scm-option package=<pkg> --scm-option branch=<branch>
+
 config_opts['scm_opts']['package'] = 'mypkg'
 config_opts['scm_opts']['branch'] = 'main'
 ```
@@ -1007,7 +963,7 @@ config_opts['target_arch'] = 'riscv64'
 config_opts['legal_host_arches'] = ('i386', 'i586', 'i686', 'x86_64','riscv64')
 ```
 
-#### 关于$CHROOT/etc/yum/yum.conf或$CHROOT/etc/dnf/dnf.conf包含的内容
+#### 关于\$CHROOT/etc/yum/yum.conf或\$CHROOT/etc/dnf/dnf.conf包含的内容
 
 在缺少'dnf.conf'配置的情况下使用DNF，则 'yum.conf'的内容将被填入到$CHROOT/etc/dnf/dnf.conf中，反之亦然。但config_opts['yum.conf'] = ''或 config_opts['dnf.conf'] = ''这两个配置是二选一的，不应同时使用。
 
@@ -1026,6 +982,14 @@ config_opts['dnf_warning'] = True
 ```
 
 警告！若其为False将使RHEL{6,7}平台自动使用Yum。
+
+#### riscv64特定配置
+
+```shell
+config_opts['qemu_user_static_mapping'] = {
+    'riscv64': 'riscv64',
+}
+```
 
 ### 可选配置
 
@@ -1114,7 +1078,7 @@ config_opts['no_root_shells'] = False
 
 ### 代理设置
 
-可用配置为https_proxy、ftp_proxy和no_proxy，可指定一个代理，例如: '[http://localhost:3128'。但默认配置下,现有的环境变量将会被读取复用](http://localhost:3128'。但默认配置下,现有的环境变量将会被读取复用/)
+可用配置为https_proxy、ftp_proxy和no_proxy，可指定一个代理，例如: 'http://localhost:3128'。但默认配置下,现有的环境变量将会被读取复用
 
 ```shell
 config_opts['http_proxy']  = os.getenv("http_proxy")
@@ -1164,3 +1128,4 @@ config_opts['extra_chroot_dirs'] = []
 
 ```shell
 config_opts['opstimeout'] = 0
+```
