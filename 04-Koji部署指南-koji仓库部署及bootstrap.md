@@ -31,7 +31,7 @@ find riscv64/ -iname '*.rpm' | xargs -n 1 koji import --link
 find src/ -iname '*.rpm' | xargs -n 1 koji import --link
 ```
 
-注：若rpm包和/mnt/koji处同一分区，可通过 ``koji import --link``创建文件的硬链接，以避免将其上传至hub，可以**非常显著地**提高导入速度。**要使用``--link``参数， 你必须root账户。**强烈建议使用``--link``参数。
+注：若rpm包和/mnt/koji处同一分区，可通过 ``koji import --link``创建文件的硬链接，以避免将其上传至hub，可以**非常显著地**提高导入速度。**要使用``--link``参数， 你必须root账户。** 强烈建议使用``--link``参数。
 
 ### 获得某个release的完整软件包(Package)列表
 
@@ -40,11 +40,13 @@ find src/ -iname '*.rpm' | xargs -n 1 koji import --link
 #### 通过官方镜像仓库
 
 1. 下载仓库中的\*-filelists.xml.gz文件
+   
    1. 镜像列表：https://admin.fedoraproject.org/mirrormanager/
    2. 例如选择163镜像，路径为http://mirrors.163.com/fedora/releases/36/Everything/source/tree/repodata/
    3. 下载其中的*-filelists.xml.gz文件. （注：其实 primary和other也是可以过滤出包列表的，但是filelists文件最小） 
 
-2. 解压gz文件，并过滤出 “\<package pkgid="*" name="*" arch="src">”
+2. 解压gz文件，并过滤出 “\<package pkgid="\*" name="\*" arch="src">”
+
 3. 文本处理，保留`name=`后面的值，这个值的列表就是仓库中包名列表。
 
 #### 通过官方fullfilelist 文件
@@ -52,7 +54,7 @@ find src/ -iname '*.rpm' | xargs -n 1 koji import --link
 1. 下载fedoraproject中的fullfilelist文件：https://dl.fedoraproject.org/pub/fedora/fullfilelist 
 
 2. 通过字符处理，得到package列表文件：
-
+   
    ```shell
    grep src.rpm fullfilelist | \
    sed -e 's|^.*linux\/.*\/Packages\/.\/||g' \
@@ -61,7 +63,7 @@ find src/ -iname '*.rpm' | xargs -n 1 koji import --link
    uniq \
    > full_pkg_list.txt
    ```
-
+   
    通过这个操作可以获得最新的完整package列表。
 
 #### 最佳方法：通过官方koji系统
@@ -98,7 +100,7 @@ koji show-groups --comps f37-build > comps_f37_koji.xml
 
 这个文件基于不同构架可能有不同，但变化不大。这应该是实现最小编译环境（buildroot）的一个好起点。
 
-- __备注：__可对 Fedora Koji 实例运行以下命令获取当前 Fedora *build* 组信息：
+- __备注：__ 可对 Fedora Koji 实例运行以下命令获取当前 Fedora *build* 组信息：
 
 ```shell
 koji -s https://koji.fedoraproject.org/kojihub list-groups f37-build
@@ -112,23 +114,17 @@ koji -s https://koji.fedoraproject.org/kojihub list-groups f37-build
 koji add-tag f36_rv64
 ```
 
-
-
 添加（package）软件包列表（只是包名）到这个tag。
 
 ```shell
 cat f36_pkg_list.txt | xargs -n 64 koji add-pkg --owner f36_rv64
 ```
 
-
-
 如果你只想包含你已经导入的软件包，操作如下（不推荐）：
 
 ```shell
 koji list-pkgs --quiet | xargs -n 64 koji add-pkg --owner <kojiuser> f36_rv64
 ```
-
-
 
 ## 创建构建标签（build tag）并配置
 
@@ -139,8 +135,6 @@ koji add-tag --parent f36_rv64 --arches "riscv64" f36_rv64_build
 koji add-tag-inheritance --priority 1 f36_rv64_build f35_rv64_build
 ```
 
-
-
 ### 导入组信息
 
 在已经获取某个标签的 Fedora 的组信息的XML文件后（两个文件，一个是功能组，另一个是koji需要的*-build），将它们批量导入你的构建标签（build tag）：
@@ -149,8 +143,6 @@ koji add-tag-inheritance --priority 1 f36_rv64_build f35_rv64_build
 koji import-comps comps_f36.xml f36_rv64_build
 koji import-comps comps_f36_koji.xml f36_rv64_build
 ```
-
-
 
 手动添加组信息，见[附录](https://lwebapp.com/zh/docx-to-markdown#_手动添加组信息流程)。
 
@@ -163,8 +155,6 @@ koji add-target f36_rv64_build_target f36_rv64_build f36_rv64
 #koji add-target <target name> <build tag> <des tag>
 ```
 
-
-
 ## 将导入的软件包(build)打上标签(tag)
 
 ### 方法一：list-untagged
@@ -174,8 +164,6 @@ koji add-target f36_rv64_build_target f36_rv64_build f36_rv64
 ```shell
 koji list-untagged | xargs -n 1 koji call tagBuildBypass f36_rv64
 ```
-
-
 
 ### 方法二：find
 
@@ -189,8 +177,6 @@ Builds_list.txt
 cat Builds_list.txt | xargs -n 1 koji call tagBuildBypass f36_rv64
 ```
 
-
-
 调用 *tagBuildBypass* 方法（而非使用 ``koji tag-build``）是为了避免 Builder 频繁处理*tagBuild*，而只是直接打上标签。这将会节约很多时间，特别是在给大量软件包大标签的场景。
 
 ## 【重/创】建仓库信息（repodata）
@@ -198,8 +184,6 @@ cat Builds_list.txt | xargs -n 1 koji call tagBuildBypass f36_rv64
 ```shell
 koji regen-repo f36_rv64_build
 ```
-
-
 
 待仓库创建完成，就应该可以进行正常编译了。
 
@@ -221,21 +205,17 @@ koji regen-repo f36_rv64_build
 koji add-tag f36_rv64_dev
 ```
 
-
-
 并设置你需要的构架信息，并将之前创建的标签作为父标签。
 
 ```shell
 koji add-tag --parent f36_rv64_dev --arches "riscv64" f36_rv64_dev_build
 ```
 
-
-
 ### [导入组信息](https://lwebapp.com/zh/docx-to-markdown#_导入组信息)
 
-## __添加一个外部仓库到构建标签（build tag） __
+## 添加一个外部仓库到构建标签（build tag）
 
-__Koji 会将 $arch 替换为构建标签中的 arches__。 但 __``$`` 需要转义符__以阻止 shell 在传递给 Koji 前将其作为变量翻译。详见以下的外部仓库 URL范例。
+__Koji 会将 \$arch 替换为构建标签中的 arches 。 但 __``$`` 需要转义符__ 以阻止 shell 在传递给 Koji 前将其作为变量翻译。详见以下的外部仓库 URL范例。
 
 ```shell
 $ koji add-external-repo -t f36_rv64_dev_build f36_rv64_dev_build-external-repo http://koji.tekkmanv.com/path/to/repo/for/foo/\$arch/
@@ -245,11 +225,11 @@ $ koji add-external-repo -t f36_rv64_dev_build f36_rv64_dev_build-external-repo 
 #-m MODE, --mode=MODE  Set merge mode(koji/bare/simple)
 ```
 
-- 注：这里使用的是 $arch，而非 $basearch。
+- 注：这里使用的是 \$arch，而非 \$basearch。
 
 ### 备注：仓库优先级
 
-__如果需要添加多个外部仓库，koji 会给每个仓库以先入先出（FIFO）的顺序指派一个优先级。这就可能导致更新包可能由于旧包所在的仓库优先级高（数字越小优先级越高）而不可见。__请使用``-p``参数指定特定的仓库优先级。
+__如果需要添加多个外部仓库，koji 会给每个仓库以先入先出（FIFO）的顺序指派一个优先级。这就可能导致更新包可能由于旧包所在的仓库优先级高（数字越小优先级越高）而不可见。__ 请使用``-p``参数指定特定的仓库优先级。
 
 ### 备注：外部仓库合并方式
 
@@ -261,7 +241,7 @@ __如果需要添加多个外部仓库，koji 会给每个仓库以先入先出�
 
 ##### ``bare``
 
-它通过 ``mergerepos_c --pkgorigins --all``实现。这会将所有相同包名和构架的包合并进来，**只要版本（version）或发行版本（release）不同就可接受__。模块化仓库（modular repos）依赖这一特性。这需要在builder中安装0.14版本及以上的``createrepo_c``，并且其需要在开启libmodule支持下进行编译。就算使用这个选项，__在遇到具有相同NEVRA(name-epoch-version-release-arch)的软件包时，只接受首次遇到的rpm。**
+它通过 ``mergerepos_c --pkgorigins --all``实现。这会将所有相同包名和构架的包合并进来，**只要版本（version）或发行版本（release）不同就可接受。模块化仓库（modular repos）依赖这一特性。这需要在builder中安装0.14版本及以上的``createrepo_c``，并且其需要在开启libmodule支持下进行编译。就算使用这个选项，在遇到具有相同NEVRA(name-epoch-version-release-arch)的软件包时，只接受首次遇到的rpm。**
 
 ##### ``simple``
 
@@ -283,13 +263,11 @@ koji edit-external-repo --url='https://koji.tekkamanv.com/repos/splited/f36/$arc
 #-a ARCH1,ARCH2, ..., 
 ```
 
-
-
 ### 外部仓库的URL范例
 
 Fedora 最小 buildroots需要下载大约100Mb数据，然后还需要下载编译依赖。这些会在每次编译时被下载，你可通过使用本地镜像或者通过缓存代理来节省大量的网络带宽。
 
-**注意: 这里使用 $arch \**而不是\** $basearch**
+**注意: 这里使用 \$arch 而不是 \$basearch**
 
 Fedora 36
 
@@ -314,15 +292,11 @@ https://mirrors.kernel.org/fedora-epel/7/\$arch/
 koji add-target f36_rv64_dev_build_target   f36_rv64_dev_build f36_rv64_dev
 ```
 
-
-
 此时你可以通过"taginfo"命令验证其外部仓库已经设置完毕。即其已经被列在了"External repos"下。以下是一个添加了一个 F33外部仓库的例子:
 
 ```shell
 koji taginfo dist-foo-build
 ```
-
-
 
 ### 标签和构建目标范例
 
@@ -340,13 +314,11 @@ koji taginfo dist-foo-build
 ```shell
  dist-f36-updates  - 此为带有f36 release及f36 updates外部仓库的标签
      `- dist-f36-build - 此为带有从dist-f35-build继承而来的'build'和
-     	 |			    'srpm-build'分组信息的 f36 编译标签，故其buildroot
-     	 |			    得以部署，但无需为每个单独的release来维护分组信息。
+          |                'srpm-build'分组信息的 f36 编译标签，故其buildroot
+          |                得以部署，但无需为每个单独的release来维护分组信息。
          `- dist-f35-build          - etc.
              `- dist-f34-build      - etc.
 ```
-
-
 
 #### 构建目标（build target）
 
@@ -357,8 +329,6 @@ koji taginfo dist-foo-build
 ```shell
 koji regen-repo f36_rv64_dev_build
 ```
-
-
 
 待仓库创建完成，就应该可以进行正常编译了。
 
@@ -385,20 +355,16 @@ koji add-group f36_rv64_build appliance-build
 #koji add-group <build tag> <group name>
 ```
 
-
-
 将package添加到相应的 *-build组中：
 
 ```shell
 koji add-group-pkg f36_rv64_build build pkg1
 ```
 
-
-
-| 组名       | package                                                      |
-| ---------- | ------------------------------------------------------------ |
+| 组名         | package                                                                                                                                                                                                                                                                                |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | build      | bash<br />bzip2<br />coreutils<br />cpio<br />diffutils<br />findutils<br />gawk<br />gcc<br />gcc-c++<br />grep<br />gzip<br />info<br />make<br />patch<br />regulus-release<br />regulus-rpm-config<br />rpm-build<br />sedshadow-utils<br />tar<br />unziputil-linux-ng<br />which |
-| srpm-build | bash<br />curl<br />git<br />gnupg<br />make<br />rpm-build<br />shadow-utils<br />regulus-rpm-config<br />regulus-release |
+| srpm-build | bash<br />curl<br />git<br />gnupg<br />make<br />rpm-build<br />shadow-utils<br />regulus-rpm-config<br />regulus-release                                                                                                                                                             |
 
 ## koji build 必须的最小环境
 

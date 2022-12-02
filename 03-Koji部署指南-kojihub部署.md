@@ -30,14 +30,14 @@ sudo dnf install koji-hub koji-web koji-utils
 
 # 2. 软件配置
 
-Koji 主要支持 Kerberos 和 SSL Certificate 认证。对于基本的命令行访问，通常的用户名/密码组合也可以。但__kojiweb不支持用户名/密码认证，__故只有Kerberos 或 SSL Certificate 其中一种认证建立，kojiweb 才会工作。
+Koji 主要支持 Kerberos 和 SSL Certificate 认证。对于基本的命令行访问，通常的用户名/密码组合也可以。但 __kojiweb不支持用户名/密码认证，__ 故只有Kerberos 或 SSL Certificate 其中一种认证建立，kojiweb 才会工作。
 
 - Kerberos验证：前提是已经具备了可用的 Kerberos 环境，初始化 Koji 用户数据时必须已经建立好管理用户的安全凭证；
 - **SSL验证：需要为 xmlrpc 服务程序、Koji 其他各组件、管理用户准备好 SSL 证书。**
 
 ## 准备 SSL 安全验证的环境
 
-在__缺乏 kerberos 支持__的环境下，选用__ssl证书来进行身份认证__。
+在 __缺乏 kerberos 支持__ 的环境下，选用 __ssl证书来进行身份认证__ 。
 
 ### 身份认证配置(ssl)
 
@@ -53,27 +53,27 @@ cd /etc/pki/koji
 ```
 
 1. 建立目录
-
+   
    ```shell
    sudo mkdir {certs,confs,private}
    ```
 
 2. 创建CA相关文件
-
+   
    - 基础设置模板
-
-     in 工作目录中（可以是__/etc/pki/koji__，但不是必须的__）, 创建文件openssl.cnf__文件
-
+     
+     in 工作目录中（可以是 __/etc/pki/koji__，但不是必须的 __）, 创建文件openssl.cnf__ 文件
+     
      ```shell
      vi openssl.conf
      ```
-
+     
      内容如下：
-
+     
      ```shell
      WORK                    = /etc/pki/koji
      RANDFILE                = .rand
-     CANAME			    	= koji
+     CANAME                    = koji
      
      [ca]
      default_ca              = ca_default
@@ -99,7 +99,7 @@ cd /etc/pki/koji
      [policy_match]
      countryName             = match
      stateOrProvinceName     = match
-     localityName		    = match
+     localityName            = match
      organizationName        = match
      organizationalUnitName  = optional
      commonName              = supplied
@@ -127,26 +127,26 @@ cd /etc/pki/koji
      authorityKeyIdentifier          = keyid:always,issuer:always
      basicConstraints                = CA:true
      ```
-
+   
    - 初始化CA数据库文件
-
+     
      CA 证书是用来签发其他 SSL 证书的密钥/证书对。在对 Koji 各组件进行配置时，客户端和服务端程序要用到的 CA 证书都来自这一步骤生成的 CA 证书。CA 证书放在 /etc/pki/koji 目录下，其他各组件的证书则放在 /etc/pki/koji/certs 目录下。**index.txt** 中会记录所有签发证书的相关信息。
-
+     
      在/etc/pki/koji目录下，
-
-     - 创建空文件__index.txt__备用
-
+     
+     - 创建空文件 __index.txt__ 备用
+     
      - 创建文本文件serial来存储序号，初始内容为两个ascii字符: 01
-
+       
        ```shell
        sudo touch index.txt
        sudo vi serial
        ```
-
+   
    - 创建CA证书
-
+     
      如果使用脚本来自动化证书生成，可以参考使用下面的命令：
-
+     
      ```shell
      WORK_DIR=/etc/pki/koji
      
@@ -172,19 +172,19 @@ cd /etc/pki/koji
              -subj ${SSL_CONF_SUBJ} \
              -out ${CA_CERT_CRT}
      ```
-
+     
      上述命令不会对证书相关的信息进行二次确认，因为所有信息都已经在配置文件和命令行中。
-
-     __其中 organizationUnitName （OU）和 commonName（CN） 在生成不同组件的证书是需要进行相应调整。__对于 CA 证书本身，这些信息没有特殊限制，建议使用服务器的 FQDN 作为 commonName 。
-
+     
+     __其中 organizationUnitName （OU）和 commonName（CN） 在生成不同组件的证书是需要进行相应调整。__ 对于 CA 证书本身，这些信息没有特殊限制，建议使用服务器的 FQDN 作为 commonName 。
+     
      - __FQDN__：(Fully Qualified Domain Name)全限定域名：同时带有主机名和域名的名称。 （通过符号“.”） 例如：主机名是koji,域名是tekkamanv.com,那么FQDN就是koji.tekkamanv.com。
 
 3. 签发模块证书
-
+   
    ![img](./picture/3.3.png)
-
+   
    - 简单的模块证书签发流程脚本范例：cert-issue.sh
-
+     
      ```shell
      #!/bin/bash
      WORK_DIR=/etc/pki/koji
@@ -216,55 +216,55 @@ cd /etc/pki/koji
      
      -----------------------------------------------------------------
      sudo openssl genrsa \
-     	-out ${__PRI_KEY} 2048 \
+         -out ${__PRI_KEY} 2048 \
      && \
      sudo openssl req -new -nodes -passin file:${PASSPHRASE_FILE} \
-     	-config ${SSL_CONF_TEMPLATE} \
-     	-subj ${__SSL_CONF_SUBJ} \
-     	-key ${__PRI_KEY} \
-     	-out ${__CSR_FILE} \
+         -config ${SSL_CONF_TEMPLATE} \
+         -subj ${__SSL_CONF_SUBJ} \
+         -key ${__PRI_KEY} \
+         -out ${__CSR_FILE} \
      && \
      sudo openssl ca -batch -passin file:${PASSPHRASE_FILE} \
-     	-config ${SSL_CONF_TEMPLATE} \
-     	-out ${__CRT_FILE} \
-     	-infiles ${__CSR_FILE} \
+         -config ${SSL_CONF_TEMPLATE} \
+         -out ${__CRT_FILE} \
+         -infiles ${__CSR_FILE} \
      && \
      sudo cat ${__CRT_FILE} ${__PRI_KEY}  | sudo tee ${__PEM_FILE} > /dev/null
      ```
-
+     
      签发模块证书过程中应注意common name（CN）：
-
+     
      - **若用于用户认证应使用用户名称，**
      - **若用于服务器认证，则应该使用服务器的主机名（域名）。**
-
+     
      在使用脚本签发证书前，请确保脚本有执行权限。
-
+   
    - 签发Koji 各组件以及用户证书
-
+     
      Koji 每一个组件都需要单独的证书来标识自身。
-
+     
      - 服务端组件(kojihub/kojiweb)
-
+       
        __其中 kojihub 和 kojiweb 的证书是作为服务端证书需要通过客户端验证的，故应将证书的 CN ( common name ) 配置为服务器的 FQDN__，否则客户端程序会提示证书的 common name 和服务器主机名不匹配。
-
+       
        **生成 kojiweb 的证书时，证书的所有相关信息（如，C、ST、L、O、CN 等）都需要加入到 /etc/koji-hub/hub.conf 中的 [ProxyDNs 配置](#_AuthError 问题)中去。**
-
+       
        为方便识别，可将这2个证书的 OU （organizationalUnitName）分别配置为 kojihub 和 kojiweb 。
-
+     
      - 客户端组件(kojira/kojid/kojiadmin/koji_user)
-
+       
        __其他证书（如 kojira、kojid、管理用户以及其他用户）作为客户端证书，CN 只需要设置为这些对象用来登录的服务端的用户名即可__，如 __kojira 的证书 CN 应该设置为 kojira。__原因是证书的 CN 需与 koji 数据库中的用户名匹配。在这些组件和服务端程序通信时，若数据库中找不到和证书 的CN 对应的用户，验证将无法通过，客户端访问将会被拒绝。
-
+       
        **当使用 koji add-host 命令添加builder时，会在 koji 数据库中添加一个用户（其将出现在builder列表中，但不出现在user列表中）。这个用户的名称需与builder所使用证书的 CN 保持一致，否则构建主机将会无法访问 kojihub 服务器。必须使用不同的common name（CN），建议使用不同的email或OU！**
-
-     | 管理员用户   | sudo ./cert-issue.sh kojiadmin                               |
-     | ------------ | ------------------------------------------------------------ |
+     
+     | 管理员用户      | sudo ./cert-issue.sh kojiadmin                                                                              |
+     | ---------- | ----------------------------------------------------------------------------------------------------------- |
      | **koji**组件 | **sudo ./cert-issue.sh kojihub**<br />**sudo ./cert-issue.sh kojiweb**<br />**sudo ./cert-issue.sh kojira** |
-
+   
    - 生成 PKCS12 用户证书 （供网页浏览器使用）
-
+     
      PKCS12 用户证书是为了用户通过网页登录 kojiweb 的koji站点准备的。
-
+     
      ```shell
      WORK_DIR=/etc/pki/koji
      # if you change your certificate authority name to something else you will
@@ -279,23 +279,23 @@ cd /etc/pki/koji
      
      ---------------------------------------------------------------
      sudo openssl pkcs12 -export \
-     	-inkey ${__PRI_KEY} \
-     	-in ${__CRT_FILE} \
-     	-CAfile ${CA_CERT_CRT} \
-     	-out ${__P12_FILE}
+         -inkey ${__PRI_KEY} \
+         -in ${__CRT_FILE} \
+         -CAfile ${CA_CERT_CRT} \
+         -out ${__P12_FILE}
      ```
 
 4. 客户端证书配置
-
+   
    - 为命令行用户配置证书
-
+     
      命令行用户使用 koji 命令行工具可以对 koji 系统进行管理。
-
+     
      __以kojiadmin为例__，创建 kojiadmin 用户（koji 系统中的用户，并生成用户证书）之后，
-
+     
      - koji 命令行工具默认使用全局配置文件 /etc/koji.conf，将该文件复制到 ~/.koji/目录下，并根据情况进行调整。
      - 将 CA 证书 和 自己的用户证书复制到系统用户（普通用户也可以）的 ~/.koji 目录之下
-
+     
      ```shell
      mkdir ~/.koji
      cp  /etc/koji.conf  ~/.koji/
@@ -304,16 +304,16 @@ cd /etc/pki/koji
      # 注意：用户证书需要用 PEM 文件而不是 CRT
      cp /etc/pki/koji/koji_ca_cert.crt ~/.koji/serverca.crt
      ```
-
-     配置新用户操作相同，也是拷贝配置文件、证书和ca证书到相应位置，参见配置新用户。
      
+     配置新用户操作相同，也是拷贝配置文件、证书和ca证书到相应位置，参见配置新用户。
+   
    - 为网页浏览器配置用户证书
-   
-     PKCS12 用户证书的生成，请参考生成生成 PKCS12 用户证书 （供网页浏览器使用），并在__使用前导入证书（用户和CA）。__
-   
+     
+     PKCS12 用户证书的生成，请参考生成生成 PKCS12 用户证书 （供网页浏览器使用），并在 __使用前导入证书（用户和CA）。__
+     
      **当前只有 火狐浏览器, 经验证可通过证书登陆；而chrome不支持证书登陆。**
-   
-     \- - **首先请保证证书的读取权限对当前用户是可读的。** - 进入__about:preferences#privacy__ 页面的__“Certificates”__配置，并点击__“View Certificates…”__进入 “Certificate Manager”的 “__Your Certificates”标签__。点击 **“Import...”**,选择刚刚的p12文件即可。
+     
+     \- - **首先请保证证书的读取权限对当前用户是可读的。** - 进入 __about:preferences#privacy__ 页面的 __“Certificates”__ 配置，并点击 __“View Certificates…”__ 进入 “Certificate Manager”的 “__Your Certificates”标签__。点击 **“Import...”**,选择刚刚的p12文件即可。
      
      ![img](./picture/3.4.png)
      
@@ -322,32 +322,32 @@ cd /etc/pki/koji
      以下是可能遇到的问题和解决方案：
      
      - Post-Handshake 问题
-     
+       
        如果点击login时出现以下警告，说明浏览器当前不支持 Post-Handshake，
-     
+       
        ```shell
        Forbidden
        You don't have permission to access this resource.Reason: Cannot perform Post-Handshake Authentication.
        ```
-     
+       
        对于 火狐浏览器，我们可以用如下操作，打开这个功能；**但是chrome不支持次特性，所以暂不支持在Chrome中登陆。**
-     
+       
        ```shell
        Firefox: about:config
        security.tls.enable_post_handshake_auth -------> true
        ```
-     
+       
        ![img](./picture/3.6.png)
      
      - AuthError 问题
-     
+       
        ```shell
        An error has occurred in the web interface code. This could be due to a bug or a configuration issue.
        koji.AuthError: unable to obtain a session (ssl auth failed: koji.AuthError: emailAddress=kojiweb@koji.tekkamanv.com,CN=koji.tekkamanv.com,OU=kojiweb,O=TekkamanV,L=Shenzhen,ST=Guangdong,C=CN is not authorized to login other users )
        ```
-     
-       解决方法，在/etc/koji-hub/hub.conf 中将上面***\*类似的语句\*******\*原封不动地\****赋给ProxyDNs变量，如：
-     
+       
+       解决方法，在/etc/koji-hub/hub.conf 中将上面**类似的语句** **原封不动地**赋给ProxyDNs变量，如：
+       
        ```shell
        # vi /etc/koji-hub/hub.conf
        DNUsernameComponent = CN
@@ -357,30 +357,27 @@ cd /etc/pki/koji
        ```
      
      - server secret not configured问题
-     
+       
        ```shell
        An error has occurred in the web interface code. This could be due to a bug or a configuration issue. 
        koji.AuthError: Unable to authenticate, server secret not configured 
        ```
-     
+       
        解决方法，在/etc/kojiweb/web.conf 中uncomment“Secret = CHANGE_ME”, 后面的值随意。
-     
+       
        vi /etc/kojiweb/web.conf
-     
+       
        ```shell
        # This must be CHANGED to random value and uncommented before deployment
         #Secret = CHANGE_ME
        Secret = tekkamanv
        ```
-     
+       
        随后重启以下web服务。
-     
+       
        ```shell
        [root@tekkamanv koji]# systemctl restart httpd postgresql
        ```
-     
-     
-     
 
 ## 准备数据库
 
@@ -457,8 +454,8 @@ listen_addresses = '*’
 - **对于高并发的访问的优化：**
 
 ```shell
-max_connections = 512			# (change requires restart)
-superuser_reserved_connections = 3	# (change requires restart)
+max_connections = 512            # (change requires restart)
+superuser_reserved_connections = 3    # (change requires restart)
 ```
 
 Reference : https://www.cnblogs.com/wy123/p/14087274.html
@@ -693,7 +690,7 @@ koji-web 的主要配置文件，需要指明 koji-hub 服务、koji 文件目�
 配置文件中的 Secret 需要需要进行配置，指定一个特定的字符串即可，参见server secret not configured问题
 
 1. /etc/kojiweb/web.conf文件修改内容：
-
+   
    ```shell
    SiteName = koji
    KojiHubURL = http://koji.tekkamanv.com/kojihub
@@ -707,20 +704,20 @@ koji-web 的主要配置文件，需要指明 koji-hub 服务、koji 文件目�
    # Secret = CHANGE_ME
    Secret = tekkamanv
    ```
-
+   
    注意：此处的__每行开头不可以有空格，否则会出现类似错误：__
-
+   
    ```shell
    An error has occurred in the web interface code. This could be due to a bug or a configuration issue. 
    koji.AuthError: configuration error: set WebAuthType or on of WebPrincipal/WebCert options
    ```
 
 2. /etc/httpd/conf.d/kojiweb.conf修改内容
-
+   
    根据安全验证的类型进行调整，根据配置文件中提供的注释信息进行配置即可。
-
+   
    - koji-web SSL 验证， 开启 /koji/login 的 SSL 验证。
-
+     
      ```shell
      # uncomment this to enable authentication via SSL client certificates
      <Location /koji/login>
@@ -729,9 +726,9 @@ koji-web 的主要配置文件，需要指明 koji-hub 服务、koji 文件目�
          SSLOptions +StdEnvVars
      </Location>
      ```
-
+     
      /etc/httpd/conf.d/ssl.conf修改内容(在同一个机器上实现时，在koji-hub阶段已经配好)
-
+     
      ```shell
      SSLCertificateFile /etc/pki/koji/certs/kojihub.crt
      SSLCertificateKeyFile /etc/pki/koji/private/kojihub.key
@@ -740,15 +737,15 @@ koji-web 的主要配置文件，需要指明 koji-hub 服务、koji 文件目�
      ```
 
 3. 文件系统相关配置
-
+   
    为了 Koji-web 可以正常工作，需要对 /mnt/koji 目录的访问权限进行修改，使得不同的组件都可以访问该目录。该目录会在下面这些配置文件中出现：
-
+   
    - **/etc/kojiweb/web.conf 中的 KojiFilesURL**
    - **/etc/kojid/kojid.conf 中的 topurl**
    - **/etc/koji.conf 中的 topurl**
-
+   
    apache 的配置如下（注意：针对 apache 的版本不同，访问控制配置的格式也有不同）: **/etc/httpd/conf.d/kojihub.conf**
-
+   
    ```shell
    Alias /kojifiles /mnt/koji/
    <Directory "/mnt/koji/">
@@ -769,23 +766,23 @@ koji-web 的主要配置文件，需要指明 koji-hub 服务、koji 文件目�
    ```
 
 4. 验证 Koji-web 是否可以正常工作
-
+   
    重启 httpd 服务之后，访问 koji-web 的地址，确认是否可以正常访问、登录以及完成各种操作。
-
+   
    - 测试注意事项：临时关闭安全机制
-
-     | 开启防火墙     | sudo systemctl start firewalld                               |
-     | -------------- | ------------------------------------------------------------ |
-     | Option1        | sudo firewall-cmd --add-service=https sudo firewall-cmd --add-service=http |
-     | Option2        | sudo firewall-cmd --add-service=https **--permanent**sudo firewall-cmd --add-service=http **--permanent** |
-     | Option3        | sudo firewall-cmd --add-port=443/tcpsudo firewall-cmd --add-port=80/tcp |
-     | 彻底关闭防火墙 | sudo systemctl stop firewalld                                |
-     | 设置SElinux    | sudo setenforce permissive                                   |
-
+     
+     | 开启防火墙     | sudo systemctl start firewalld                                                                            |
+     | --------- | --------------------------------------------------------------------------------------------------------- |
+     | Option1   | sudo firewall-cmd --add-service=https sudo firewall-cmd --add-service=http                                |
+     | Option2   | sudo firewall-cmd --add-service=https **--permanent**sudo firewall-cmd --add-service=http **--permanent** |
+     | Option3   | sudo firewall-cmd --add-port=443/tcpsudo firewall-cmd --add-port=80/tcp                                   |
+     | 彻底关闭防火墙   | sudo systemctl stop firewalld                                                                             |
+     | 设置SElinux | sudo setenforce permissive                                                                                |
+   
    - 打开调试信息
-
+     
      当网页出现问题，并在页面中出现“Full tracebacks disabled”，说明kojiweb的调试没有打开，可以通过uncomment以下内容并重启httpd来开启调试信息：
-
+     
      ```shell
      sudo vi /etc/kojiweb/web.conf
      # PythonDebug = True
@@ -795,33 +792,33 @@ koji-web 的主要配置文件，需要指明 koji-hub 服务、koji 文件目�
 ## 配置并启用kojira
 
 1. 安装Kojira
-
+   
    ```shell
    sudo yum install koji-utils
    ```
 
 2. 在koji中为 kojira 添加用户并配置
-
+   
    ```shell
    koji add-user kojira
    #kojira 用户需要拥有 repo 权限
    koji grant-permission repo kojira
    ```
-
+   
    - 其他说明：
-
+     
      - kojira 对 /mnt/koji 要有读写权限；
-
+     
      - kojira 只能同时运行一个示例；
-
+     
      - 不建议将 kojira 和 kojid 放在相同的服务器，因为 kojid 对 /mnt/koji 只需要读权限；
-
+     
      - 添加新的 tag 时，kojira 可能需要重启才能正确识别。
-
+   
    - 设置koji-hub 的 url 及安全验证配置
-
+     
      使用 SSL 证书验证：/etc/kojira/kojira.conf
-
+     
      ```shell
      ;在 /etc/kojira/kojira.conf 中添加 koji-hub 的 url 地址：
      server=http://koji.tekkamanv.com/kojihub
@@ -829,13 +826,13 @@ koji-web 的主要配置文件，需要指明 koji-hub 服务、koji 文件目�
      cert = /etc/pki/koji/kojira.pem
      serverca = /etc/pki/koji/koji_ca_cert.crt
      ```
-
+   
    - /etc/sysconfig/kojira
-
+     
      kojira 程序对 /mnt/koji/repos 目录要有读写权限，如果该目录的权限无法调整（比如配置了 root_squash 的 NFS 共享目录等），可以在 /etc/sysconfig/kojira 中配置 RUNAS= 指定的用户来获取需要的权限。
 
 3. 使能并启动服务
-
+   
    ```shell
    sudo systemctl enable --now kojira
    ```
@@ -845,25 +842,25 @@ koji-web 的主要配置文件，需要指明 koji-hub 服务、koji 文件目�
 在koji系统投入使用后，需要添加用户，并给用户赋予不同的权限（管理员、工程师），koji是通过“permissions”权限系统来管理的。配置新用户主要有以下步骤：
 
 1. 生成用户证书
-
+   
    请参考[Koji 各组件以及管理用户签发证书]和 [生成 PKCS12 用户证书（供网页浏览器使用）]。
-
+   
    > （注：以下所有的koji命令都以Koji系统管理员的身份运行）
 
 2. 添加用户
-
+   
    ```shell
    koji add-user koji_user
    ```
 
 3. 配置用户权限
-
+   
    ```shell
    koji grant-permission <Permission name> koji_user
    ```
-
+   
    这里的Permission name可以通过一下命令获取：
-
+   
    ```shell
    [tekkamanninja@Samantha ~]$ koji -p openkoji list-permissions 
    Permission name      Description                                       
@@ -890,7 +887,7 @@ koji-web 的主要配置文件，需要指明 koji-hub 服务、koji 文件目�
 由于koji版本升级，可能导致数据库需要手动升级以匹配新版本koji代码。步骤简要总结如下：
 
 1. 获取版本差异
-
+   
    ```shell
    [tekkamanninja@Samantha ~]$ rpm -q koji
    koji-1.27.1-1.fc35.noarch
@@ -898,44 +895,42 @@ koji-web 的主要配置文件，需要指明 koji-hub 服务、koji 文件目�
    [tekkamanninja@Samantha ~]$ rpm -q koji
    koji-1.29.1-3.fc35.noarch
    ```
-
+   
    所以示例中，koji的版本从1.27 升级至1.29。升级后，可能出现以下问题：
-
+   
    ```shell
    [tekkamanninja@Samantha ~]$ koji list-permissions
    2022-08-14 15:58:04,070 [ERROR] koji: Fault: <Fault 1: '<class \'psycopg2.errors.UndefinedColumn\'>: column "description" does not exist\nLINE 1: SELECT id, name, description FROM permissions\n                         ^\n'>
    ```
-
+   
    这正是由于数据库没有升级导致的，示例中版本跨度小，只影响了一个非关键的小命令。但如果跨度较大，可能导致整个koji系统无法正常运行。
 
 2. 升级数据库
-
+   
    koji本身提供了数据库升级的方法和说明：[migrations](https://docs.pagure.org/koji/migrations/migrations/)
-
+   
    例如我们需要从1.27升级到1.29，就需要依次看：
-
+   
    - [Migrating to Koji 1.28](https://docs.pagure.org/koji/migrations/migrating_to_1.28/)
    - [Migrating to Koji 1.29](https://docs.pagure.org/koji/migrations/migrating_to_1.29/)
-
+   
    其实主要的操作就是依次运行：
-
+   
    即使“/usr/share/doc/koji/docs/schema-upgrade-1.28-1.29.sql”是无任何操作的文件。
-
+   
    ```shell
    psql koji koji  </usr/share/doc/koji/docs/schema-upgrade-1.27-1.28.sql
    psql koji koji  </usr/share/doc/koji/docs/schema-upgrade-1.28-1.29.sql
    ```
-
+   
    完成升级后，最好重启服务：
-
+   
    ```shell
    sudo service postgresql restart
    sudo service httpd restart
    sudo service kojira restart
    sudo service kojid restart
    ```
-
-
 
 # 3.koji 故障处理（TODO，待验证）
 
@@ -1017,4 +1012,3 @@ service kojira restart
 ```shell
 service kojid restart
 ```
-

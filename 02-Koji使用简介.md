@@ -24,7 +24,7 @@ admin commands:
     ...
 
 $ koji build --help
-	Usage: koji build [options] <target> <srpm path or scm url>
+    Usage: koji build [options] <target> <srpm path or scm url>
 The first option is the build target, not to be confused with the destination tag (where the build eventually lands) or build tag (where the buildroot contents are pulled from).
 You can list all available build targets using the 'koji list-targets' command.
 More detail can be found in the documentation.
@@ -81,7 +81,7 @@ Package        Tag                            Extra Arches     Owner
 ElectricFence   f36                                             kojiadmin
 ```
 
-第一列是软件包的名称，__第二列告诉您这个软件包从哪个tag继承而来。__第三列告诉您软件包的所有者是谁。
+第一列是软件包的名称，__第二列告诉您这个软件包从哪个tag继承而来。__ 第三列告诉您软件包的所有者是谁。
 
 ## d. 查看最近的编译任务
 
@@ -101,18 +101,19 @@ zzuf-0.15-16.fc36                f36                           kojiadmin
 ## e. koji 软件包管理
 
 - 管理tag和build tag
-
-	- tag是用来管理导入的PACKAGES的标签，标签可以继承
-	- buildtag 是用来标志编译软件时需要的标签，buildtag一般继承于tag
-
+  
+  - tag是用来管理导入的PACKAGES的标签，标签可以继承
+  
+  - buildtag 是用来标志编译软件时需要的标签，buildtag一般继承于tag
+    
     ```shell
     koji add-tag nk6.0-mips64el
-
-    koji add-tag __--parent__ nk6.0-mips64el __--arches=mips64el__ nk6.0-mips64el-build
+    
+    koji add-tag --parent nk6.0-mips64el --arches=mips64el nk6.0-mips64el-build
     ```
-
-	- **修改标签属性**
-	
+  
+  - **修改标签属性**
+    
     ```shell
     koji edit-tag  --arches='riscv64' f36dev_rv64_build
     #koji edit-tag [options] <name>
@@ -132,82 +133,83 @@ zzuf-0.15-16.fc36                f36                           kojiadmin
     #  -r key, --remove-extra=key   Remove tag extra option
     #  -b key, --block-extra=key     Block inherited tag extra option
     ```
-	
-	- __移除不用的 tag__
-	
+  
+  - __移除不用的 tag__
+    
     ```shell
     koji remove-tag nk6.0-mips64el
     ```
 
 - 导入SRPM和RPM
-
-    ```shell
-    koji import [--link] <SRPM1> <SRPM2> ...
-	
-    koji import [--link] <RPM1> <RPM2> ...
-    ```
-
-	- __导入RPM包的原则：__
-	
-		- __应遵循先导入SRPM，然后再导入对应的RPM包的原则;__
-		
-		- 如果需要导入一个没有SRPM可对应的RPM包，请使用以下命令直接导入RPM：
+  
+  ```shell
+  koji import [--link] <SRPM1> <SRPM2> ...
+  
+  koji import [--link] <RPM1> <RPM2> ...
+  ```
+  
+  - __导入RPM包的原则：__
+    
+    - __应遵循先导入SRPM，然后再导入对应的RPM包的原则;__
+    
+    - 如果需要导入一个没有SRPM可对应的RPM包，请使用以下命令直接导入RPM：
       
-        ```shell
-        koji import --create-build <RPM1> <RPM2>
-		  ```
-		  
-		  如果要导入的packages和/mnt/koji目录树在同一个分区，那么建议使--link选项，它以创建硬连接的方式导入，可大大提高速度。
-		
-	- __如何导入已存在Build ID的 RPM包__
-
-        如果要导入一个koji已经编译过包（无论编译失败还是成功），导入会失败。
-
-        需要对这个build进行底层处理“__resetBuild +createEmptyBuild __”方可继续导入。
-
-        ```shell
-        koji call resetBuild <build>
-        #  Reset a build so that it can be reimported
-            WARNING: this function is highly destructive. use with care.
-            nulls task_id
-            sets state to CANCELED
-            clears all referenced data in other tables, including buildroot and archive component tables
-            after reset, only the build table entry is left
-        koji call createEmptyBuild <name> <version> <release> <epoch> [owner=None]
-        koji call deleteBuild <build>
-        #  delete a build, if possible
-            Attempts to delete a build. A build can only be deleted if it is
-            unreferenced.
-            If strict is true (default), an exception is raised if the build cannot
-            be deleted.
-
-            Note that a deleted build is not completely gone. It is marked deleted and some
-            data remains in the database.  Mainly, the rpms are removed.
-            Note in particular that deleting a build DOES NOT free any NVRs (or NVRAs) for
-            reuse.
-        koji call moveBuild <tag_src> <tag_des> <build> [force=False]
-        #Move a build from tag1 to tag2
-        ```
-
-        [https://koji.fedoraproject.org/koji/api](https://koji.fedoraproject.org/koji/api)
-
-	- __为导入的软件包打上标签__
-
-        ```shell
-        koji list-pkgs --quiet | xargs koji add-pkg --owner kojiadmin nk6.0-mips64el
-        
-        koji list-untagged | xargs -n 1 koji call tagBuildBypass nk6.0-mips64el
-        ```
+      ```shell
+      koji import --create-build <RPM1> <RPM2>
+      ```
+      
+      如果要导入的packages和/mnt/koji目录树在同一个分区，那么建议使--link选项，它以创建硬连接的方式导入，可大大提高速度。
+  
+  - __如何导入已存在Build ID的 RPM包__
     
-- 添加一个组信息
+      如果要导入一个koji已经编译过包（无论编译失败还是成功），导入会失败。
+    
+      需要对这个build进行底层处理“__resetBuild +createEmptyBuild__”方可继续导入。
+    
     ```shell
-    #Usage: koji add-group <tag> <group>
-    koji add-group  nk6.0-mips64el-build build
-    koji add-group  nk6.0-mips64el-build srpm-build
+    koji call resetBuild <build>
+    #  Reset a build so that it can be reimported
+        WARNING: this function is highly destructive. use with care.
+        nulls task_id
+        sets state to CANCELED
+        clears all referenced data in other tables, including buildroot and archive component tables
+        after reset, only the build table entry is left
+    koji call createEmptyBuild <name> <version> <release> <epoch> [owner=None]
+    koji call deleteBuild <build>
+    #  delete a build, if possible
+        Attempts to delete a build. A build can only be deleted if it is
+        unreferenced.
+        If strict is true (default), an exception is raised if the build cannot
+        be deleted.
+    
+        Note that a deleted build is not completely gone. It is marked deleted and some
+        data remains in the database.  Mainly, the rpms are removed.
+        Note in particular that deleting a build DOES NOT free any NVRs (or NVRAs) for
+        reuse.
+    koji call moveBuild <tag_src> <tag_des> <build> [force=False]
+    #Move a build from tag1 to tag2
     ```
     
-- __修改编译组的属性__
+      [https://koji.fedoraproject.org/koji/api](https://koji.fedoraproject.org/koji/api)
+  
+  - __为导入的软件包打上标签__
+    
+    ```shell
+    koji list-pkgs --quiet | xargs koji add-pkg --owner kojiadmin nk6.0-mips64el
+    
+    koji list-untagged | xargs -n 1 koji call tagBuildBypass nk6.0-mips64el
+    ```
 
+- 添加一个组信息
+  
+  ```shell
+  #Usage: koji add-group <tag> <group>
+  koji add-group  nk6.0-mips64el-build build
+  koji add-group  nk6.0-mips64el-build srpm-build
+  ```
+
+- __修改编译组的属性__
+  
   ```shell
   #Usage: koji add-group-pkg [options] <tag> <group> <pkg> [<pkg> ...]
   koji add-group-pkg nk6.0-mips64el-build build bash bzip2 coreutils cpio diffutils regulus-release findutils gawk gcc gcc-c++ grep gzip info make patch regulus-rpm-config rpm-build sed shadow-utils tar unzip util-linux-ng which
@@ -215,76 +217,80 @@ zzuf-0.15-16.fc36                f36                           kojiadmin
   ```
 
 - **手动【重/创】建仓库**
-
-    ```shell
-    #Usage: koji regen-repo [options] <tag>
-    koji regen-repo nk6.0-mips64el-build
-    ```
+  
+  ```shell
+  #Usage: koji regen-repo [options] <tag>
+  koji regen-repo nk6.0-mips64el-build
+  ```
 
 - **添加一个编译target**
-
-    ```shell
-    koji add-target nk6.0-mips64el nk6.0-mips64el-build
-    ```
-
+  
+  ```shell
+  koji add-target nk6.0-mips64el nk6.0-mips64el-build
+  ```
+  
     该选项的完成格式如下：
-
-    ```shell
-    koji add-target target-name from-build-tag to-dist-tag
-    ```
-
-    - target-name：target的名称
-    - from-build-tag：使用源自build-tag的软件仓库集合
-    - to-dist-tag：编译完成的build归档至目标tag的软件仓库集合，__若 to-dist-tag 与 target-name 同名时 to-dist-tag 可省略__
-
+  
+  ```shell
+  koji add-target target-name from-build-tag to-dist-tag
+  ```
+  
+  - target-name：target的名称
+  - from-build-tag：使用源自build-tag的软件仓库集合
+  - to-dist-tag：编译完成的build归档至目标tag的软件仓库集合，__若 to-dist-tag 与 target-name 同名时 to-dist-tag 可省略__
 
 ## f. 编译一个软件包(执行build)
 
 编译操作是通过命令行工具启动的。编译一个软件包的语法如下：
+
 ```shell
-$ koji build __<build target>__ <srpm path or scm url>
+$ koji build <build target> <srpm path or scm url>
 ```
+
 例如：
+
 ```shell
 $ koji build f25 git://pkgs.fedoraproject.org/rpms/eclipse-jgit?\#00ca55985303b1ce19c632922ebcca283ab6e296
 ```
 
 这个 `koji build` 命令在 Koji 中创建了一个编译任务。默认情况下，这个命令会显示状态更新信息直到编译结束，当然你也可以通过 `--nowait` 选项立即回到 shell 中。 可以通过`--help` 选项查看 build 命令的其他选项。
+
 ```shell
 $ koji build --help
 ```
+
 - 编译选项
-
+  
   这里有一些 build 命令选项的更多详细介绍：
-
+  
   - `--skip-tag`
-
+    
     通常软件包会在编译完成以后被打上标签（tag）。这个选项会使得打标签的阶段被跳过。__这个软件包(build)会在系统中，但未被打上标签__（将来可以用 tag-build 命令给它打标签）
-
+  
   - `--scratch`
-
-    这使得编译成为一个“scratch” 编译。 __这种编译信息不会导入数据库，只是单纯编译。__产生的rpms将被放入“\<topdir\>/scratch”中。“__Scratch” 编译不会被跟踪且不能被打标签，__但方便测试。“Scratch” 编译一般在一周后被删除。
-
+    
+    这使得编译成为一个“scratch” 编译。 __这种编译信息不会导入数据库，只是单纯编译。__ 产生的rpms将被放入“\<topdir\>/scratch”中。“__Scratch” 编译不会被跟踪且不能被打标签，__ 但方便测试。“Scratch” 编译一般在一周后被删除。
+  
   - `--nowait`
-
+    
     像上面陈述的， 这个让“koji”命令不会去等待编译任务的结果而直接回到shell。
-
+  
   - `--arch-override`
-
+    
     通过这个选项可以修改需要编译的基本的构架集合。这个选项仅用于beta阶段测试使用，但未来可能用于scratch builds而被保留下。
 
 - 构建失败
-
+  
   如果软件包构建失败，你将会看到如下信息。
-
+  
   ```shell
   420066 buildArch (kernel-2.6.18-1.2739.10.9.el5.jjf.215394.2.src.rpm,
             ia64): open (build-1.example.com) -> FAILED: BuildrootError:
             error building package (arch ia64), mock exited with status 10
   ```
-
+  
   你可以通过查看日志文件来查清失败的原因。如果有build.log，那就先看build.log，否则看看init.log。
-
+  
   ```shell
   $ ls -1 <topdir>/work/tasks/420066/*
             <topdir>/work/tasks/420066/build.log
@@ -294,20 +300,20 @@ $ koji build --help
   ```
 
 - 批量建立任务
-
+  
   ```shell
   ls *.src.rpm | xargs -n 1 koji build --scratch nk6.0-mips64el
   ```
-
+  
   koji import后 package和build都还没有tag，
-
+  
   build状态是complete，无法koji build，需要执行
-
+  
   1. koji add-pkg --owner  kojiadmin dist-s8 go-ovirt-engine-sdk（package_name） 
   2. koji call deleteBuild （NVR），
   3. koji call resetBuild \<NVR\>  
   4. koji build dist-nk5u8 xxxx.src.rpm。
-
+  
   1步骤：给 package种加tag 才可以编译。2，3步是该状态complete为canceled
 
 # 2. Web 界面
