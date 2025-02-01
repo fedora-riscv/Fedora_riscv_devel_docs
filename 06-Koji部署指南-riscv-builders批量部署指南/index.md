@@ -2,6 +2,8 @@
 title: '06-Koji部署指南-riscv-builders批量部署指南'
 date: 2024-09-10T00:00:00+00:00
 summary: ' '
+tags:
+    - Koji
 ---
 
 <div align='center' ><font size='20'>RISC-V builder部署</font></div>

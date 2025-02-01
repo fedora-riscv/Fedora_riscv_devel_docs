@@ -2,6 +2,8 @@
 title: '01-Koji基础知识'
 date: 2024-09-10T00:00:00+00:00
 summary: ' '
+tags:
+    - Koji
 ---
 
 <div align='center' ><font size='20'>Koji 概述</font></div>

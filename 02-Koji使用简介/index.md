@@ -2,6 +2,8 @@
 title: "02-Koji使用简介"
 date: 2024-09-10T00:00:00+00:00
 summary: ' '
+tags:
+    - Koji
 ---
 
 <div align='center' ><font size='20'>koji命令行和Web界面使用</font></div>

@@ -2,6 +2,8 @@
 title: '04-Koji部署指南-koji仓库部署及bootstrap'
 date: 2024-09-10T00:00:00+00:00
 summary: ' '
+tags:
+    - Koji
 ---
 
 <div align='center' ><font size='20'>koji仓库部署及bootstrap</font></div>
