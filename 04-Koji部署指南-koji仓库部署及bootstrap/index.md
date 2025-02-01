@@ -1,6 +1,12 @@
+---
+title: '04-Koji部署指南-koji仓库部署及bootstrap'
+date: 2024-09-10T00:00:00+00:00
+summary: ' '
+---
+
 <div align='center' ><font size='20'>koji仓库部署及bootstrap</font></div>
 
-![img](./picture/4.1.png)
+![img](./4.1.png)
 
 # 初始化一个新的Koji构建环境
 
@@ -340,7 +346,7 @@ koji regen-repo f36_rv64_dev_build
 
 # Mock（user mode）+ Koji 联合编译仓库参考布局
 
-![img](./picture/4.2.png)
+![img](./4.2.png)
 
 # **附录**
 

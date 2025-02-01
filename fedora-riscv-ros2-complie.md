@@ -1,3 +1,9 @@
+---
+title: 'Fedora ROS2 编译指南'
+date: 2024-09-10T00:00:00+00:00
+summary: ' '
+---
+
 # Fedora ROS2 编译指南
 
 ## **准备**

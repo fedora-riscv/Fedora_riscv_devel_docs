@@ -1,3 +1,9 @@
+---
+title: 'ext fedora mbs'
+date: 2024-09-10T00:00:00+00:00
+summary: ' '
+---
+
 ## Fedora 模块性（Modularity）
 
 简而言之，Modularity 可以扩展具有以下功能的 RPM 存储库： 

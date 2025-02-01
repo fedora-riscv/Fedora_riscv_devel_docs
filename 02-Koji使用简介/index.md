@@ -1,6 +1,12 @@
+---
+title: "02-Koji使用简介"
+date: 2024-09-10T00:00:00+00:00
+summary: ' '
+---
+
 <div align='center' ><font size='20'>koji命令行和Web界面使用</font></div>
 
-![img](./picture/2.1.png)
+![img](./2.1.png)
 
 # 1. 使用 Koji 命令行工具 cli
 

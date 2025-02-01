@@ -1,6 +1,12 @@
+---
+title: '01-Koji基础知识'
+date: 2024-09-10T00:00:00+00:00
+summary: ' '
+---
+
 <div align='center' ><font size='20'>Koji 概述</font></div>
 
-![img](./picture/1.1.png)
+![img](./1.1.png)
 
 [TOC]
 
@@ -94,7 +100,7 @@ koji使用tag来引用package或build的集合。也就是说可以给多个pack
 
 # 2. 结构简介
 
-![img](./picture/1.2.png)
+![img](./1.2.png)
 
 示例架构图
 

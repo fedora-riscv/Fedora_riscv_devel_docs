@@ -1,6 +1,12 @@
+---
+title: "03-Koji部署指南-kojihub部署"
+date: 2024-09-10T00:00:00+00:00
+summary: ' '
+---
+
 <div align='center' ><font size='20'>Kojihub 部署</font></div>
 
-![img](./picture/3.1.png)
+![img](./3.1.png)
 
 # 0. 基础知识
 
@@ -43,7 +49,7 @@ Koji 主要支持 Kerberos 和 SSL Certificate 认证。对于基本的命令行
 
 在内部小规模部署的情况下，直接使用自签CA来签发证书进行身份认证较为简单。
 
-![img](./picture/3.2.png)
+![img](./3.2.png)
 
 **在/etc/pki/koji下处理全部自签名证书的问题**
 
@@ -181,7 +187,7 @@ cd /etc/pki/koji
 
 3. 签发模块证书
    
-   ![img](./picture/3.3.png)
+   ![img](./3.3.png)
    
    - 简单的模块证书签发流程脚本范例：cert-issue.sh
      
@@ -315,9 +321,9 @@ cd /etc/pki/koji
      
      \- - **首先请保证证书的读取权限对当前用户是可读的。** - 进入 __about:preferences#privacy__ 页面的 __“Certificates”__ 配置，并点击 __“View Certificates…”__ 进入 “Certificate Manager”的 “__Your Certificates”标签__。点击 **“Import...”**,选择刚刚的p12文件即可。
      
-     ![img](./picture/3.4.png)
+     ![img](./3.4.png)
      
-     ![img](./picture/3.5.png)
+     ![img](./3.5.png)
      
      以下是可能遇到的问题和解决方案：
      
@@ -337,7 +343,7 @@ cd /etc/pki/koji
        security.tls.enable_post_handshake_auth -------> true
        ```
        
-       ![img](./picture/3.6.png)
+       ![img](./3.6.png)
      
      - AuthError 问题
        
